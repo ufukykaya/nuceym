@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRT Haber RSS Feed</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        .rss-widget {
+            width: 760px;
+            margin: 20px auto;
+            overflow: hidden;
+            position: relative;
+        }
+        .rss-widget h2 {
+            background: #0073e6;
+            color: white;
+            margin: 0;
+            padding: 10px;
+            text-align: center;
+        }
+        .rss-feed-container {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+        .rss-feed-container li {
+            list-style: none;
+            flex: 0 0 25%; /* 4 haber = %25 her biri */
+            position: relative;
+            margin: 0 2.5px; /* Boşluğu kontrol et */
+        }
+        .rss-feed-container li img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .rss-feed-container li .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            text-align: center;
+        }
+        .rss-feed-container li:hover .overlay {
+            opacity: 1;
+        }
+        .rss-feed-container li .overlay h3 {
+            margin: 0 0 10px;
+            font-size: 16px;
+        }
+        .rss-feed-container li .overlay p {
+            margin: 0;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="rss-widget">
+        <h2>TRT Haber - Kültür Sanat</h2>
+        <ul class="rss-feed-container" id="rssFeed"></ul>
+    </div>
+
+    <script>
+        const PROXY_URL = 'https://api.allorigins.win/get?url=';
+        const RSS_URL = 'https://www.trthaber.com/kultur_sanat_articles.rss';
+        const SLIDE_INTERVAL = 5000; // 5 saniye
+        let currentSlide = 0;
+
+        async function fetchRSSFeed() {
+            try {
+                const response = await fetch(`${PROXY_URL}${encodeURIComponent(RSS_URL)}`);
+                if (!response.ok) throw new Error('Failed to fetch RSS feed');
+                
+                const data = await response.json();
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(data.contents, "text/xml");
+                
+                const items = xmlDoc.querySelectorAll("item");
+                const feedContainer = document.getElementById('rssFeed');
+
+                // Add items to the feed
+                const feedHTML = Array.from(items).slice(0, 8).map(item => {
+                    const title = item.querySelector("title").textContent;
+                    const link = item.querySelector("link").textContent;
+                    const description = item.querySelector("description")?.textContent || "No description available.";
+                    
+                    // Try to fetch image from the enclosure or description
+                    const enclosure = item.querySelector("enclosure");
+                    const imageUrl = enclosure?.getAttribute("url") || 
+                        (description.match(/<img[^>]+src="([^">]+)"/) || [])[1] || 
+                        'https://via.placeholder.com/800x300'; // Default image
+
+                    return `
+                        <li>
+                            <a href="${link}" target="_blank">
+                                <img src="${imageUrl}" alt="News Image">
+                                <div class="overlay">
+                                    <h3>${title}</h3>
+                                    <p>${description.replace(/<[^>]*>?/gm, '').substring(0, 100)}...</p>
+                                </div>
+                            </a>
+                        </li>
+                    `;
+                }).join('');
+
+                feedContainer.innerHTML = feedHTML;
+                startSlider();
+            } catch (error) {
+                console.error('Error loading RSS feed:', error);
+                document.getElementById('rssFeed').innerHTML = '<li>Error loading feed</li>';
+            }
+        }
+
+        function startSlider() {
+            const feedContainer = document.getElementById('rssFeed');
+            const totalSlides = Math.ceil(feedContainer.children.length / 4); // Her 4 haber bir slide
+
+            setInterval(() => {
+                currentSlide = (currentSlide + 1) % totalSlides;
+                feedContainer.style.transform = `translateX(-${currentSlide * 100}%)`;
+            }, SLIDE_INTERVAL);
+        }
+
+        // Load RSS feed on page load
+        fetchRSSFeed();
+    </script>
+</body>
+</html>
