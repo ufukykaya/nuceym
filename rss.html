@@ -6,37 +6,33 @@
     <title>TRT Haber RSS Feed</title>
     <style>
         body {
-            font-family: Poppins;
+            font-family: poppins;
             margin: 0;
             padding: 0;
-            background-color: white;
+            background-color: #f9f9f9;
         }
         .rss-widget {
-            width: 730px;
-            margin: 0px auto;
-            overflow: hidden;
+            width: 740px;
+            margin: 20px auto;
+            overflow: hidden; /* Taşan haberleri gizlemek için */
             position: relative;
-        }
-        .rss-widget h2 {
-            background: white;
-            color: white;
-            margin: 0;
-            padding: 0px;
-            text-align: center;
         }
         .rss-feed-container {
             display: flex;
-            transition: transform 0.5s ease-in-out;
+            transition: transform 0.5s ease-in-out; /* Kaydırma animasyonu */
+            width: calc(740px * 2); /* 10 haber için genişlik */
         }
         .rss-feed-container li {
             list-style: none;
-            flex: 0 0 25%; /* 4 haber = %25 her biri */
+            width: 138px; /* Her kartın genişliği */
+            height: 250px; /* Her kartın yüksekliği */
+            margin: 0 1px; /* Kartlar arası boşluk */
+            flex-shrink: 0; /* Sabit genişlik */
             position: relative;
-            margin: 0 2.5px; /* Boşluğu kontrol et */
         }
         .rss-feed-container li img {
             width: 100%;
-            height: 200px;
+            height: 100%;
             object-fit: cover;
             border-radius: 8px;
         }
@@ -61,17 +57,16 @@
         }
         .rss-feed-container li .overlay h3 {
             margin: 0 0 10px;
-            font-size: 16px;
+            font-size: 15px; /* Daha küçük başlık */
         }
         .rss-feed-container li .overlay p {
             margin: 0;
-            font-size: 14px;
+            font-size: 15px; /* Daha küçük açıklama */
         }
     </style>
 </head>
 <body>
     <div class="rss-widget">
-        <h2></h2>
         <ul class="rss-feed-container" id="rssFeed"></ul>
     </div>
 
@@ -93,8 +88,8 @@
                 const items = xmlDoc.querySelectorAll("item");
                 const feedContainer = document.getElementById('rssFeed');
 
-                // Add items to the feed
-                const feedHTML = Array.from(items).slice(0, 8).map(item => {
+                // Add items to the feed (limit to 10 items)
+                const feedHTML = Array.from(items).slice(0, 10).map(item => {
                     const title = item.querySelector("title").textContent;
                     const link = item.querySelector("link").textContent;
                     const description = item.querySelector("description")?.textContent || "No description available.";
@@ -103,15 +98,15 @@
                     const enclosure = item.querySelector("enclosure");
                     const imageUrl = enclosure?.getAttribute("url") || 
                         (description.match(/<img[^>]+src="([^">]+)"/) || [])[1] || 
-                        'https://via.placeholder.com/800x300'; // Default image
+                        'https://via.placeholder.com/140x250'; // Default image
 
                     return `
                         <li>
-                            <a href="${link}" target="_blank">
+                            <a href="${link}" target="_blank" title="${title}">
                                 <img src="${imageUrl}" alt="News Image">
                                 <div class="overlay">
                                     <h3>${title}</h3>
-                                    <p>${description.replace(/<[^>]*>?/gm, '').substring(0, 100)}...</p>
+                                    <p>${description.replace(/<[^>]*>?/gm, '').substring(0, 50)}...</p>
                                 </div>
                             </a>
                         </li>
@@ -128,11 +123,10 @@
 
         function startSlider() {
             const feedContainer = document.getElementById('rssFeed');
-            const totalSlides = Math.ceil(feedContainer.children.length / 4); // Her 4 haber bir slide
-
+            const totalSlides = 2; // 10 haber, 5'erli 2 grup
             setInterval(() => {
                 currentSlide = (currentSlide + 1) % totalSlides;
-                feedContainer.style.transform = `translateX(-${currentSlide * 100}%)`;
+                feedContainer.style.transform = `translateX(-${currentSlide * 740}px)`; // 740px kaydır
             }, SLIDE_INTERVAL);
         }
 
