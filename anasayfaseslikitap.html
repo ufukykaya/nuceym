@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HTML5 MP3 Player</title>
+  <title>MP3 Player</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
     body {
@@ -23,6 +23,7 @@
       border-radius: 8px;
       text-align: center;
       overflow: hidden;
+      font-size: 15px;
     }
 
     .album-cover {
@@ -31,20 +32,16 @@
       object-fit: cover;
     }
 
-    .song-info {
-      padding: 10px;
-    }
-
     .song-info h3 {
-      margin: 0;
-      font-size: 18px;
+      margin: 10px 0 5px;
+      font-size: 16px;
       font-weight: 600;
     }
 
     .song-info p {
-      margin: 5px 0 0;
+      margin: 0;
       color: #555;
-      font-size: 14px;
+      font-size: 13px;
     }
 
     .progress-container {
@@ -55,9 +52,11 @@
     input[type="range"] {
       width: 100%;
       cursor: pointer;
+      -webkit-appearance: none;
       appearance: none;
       height: 5px;
       background: #007BFF;
+      outline: none;
       border-radius: 5px;
     }
 
@@ -72,7 +71,7 @@
       background: none;
       border: none;
       cursor: pointer;
-      font-size: 20px;
+      font-size: 24px;
       color: #007BFF;
       transition: color 0.3s;
     }
@@ -82,22 +81,35 @@
     }
 
     .playlist {
-      max-height: 150px;
-      overflow-y: auto;
       text-align: left;
-      padding: 10px;
-      margin: 0;
-      list-style: none;
+      padding: 10px 20px;
+      max-height: 200px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: #007BFF transparent;
+    }
+
+    .playlist:hover::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    .playlist::-webkit-scrollbar {
+      width: 0;
+    }
+
+    .playlist::-webkit-scrollbar-thumb {
+      background-color: #007BFF;
+      border-radius: 10px;
     }
 
     .playlist li {
       display: flex;
       align-items: center;
-      padding: 5px;
+      padding: 5px 0;
       cursor: pointer;
     }
 
-    .playlist li img {
+    .playlist img {
       width: 40px;
       height: 40px;
       margin-right: 10px;
@@ -105,27 +117,18 @@
     }
 
     .playlist li:hover {
-      background-color: #f4f4f4;
+      background-color: #f1f1f1;
     }
 
     .playlist li.active {
       font-weight: bold;
       color: #007BFF;
     }
-
-    .playlist::-webkit-scrollbar {
-      width: 5px;
-    }
-
-    .playlist::-webkit-scrollbar-thumb {
-      background: #007BFF;
-      border-radius: 10px;
-    }
   </style>
 </head>
 <body>
   <div class="player-container">
-    <img src="https://via.placeholder.com/350x200" alt="Album Cover" class="album-cover" id="albumCover">
+    <img src="https://i.tmgrup.com.tr/724dinle/2024/10/05/1728113737439.jpg" alt="Album Cover" class="album-cover" id="albumCover">
     <div class="song-info">
       <h3 id="songTitle">Bölüm 1</h3>
       <p id="songArtist">Ahmet Hamdi Tanpınar</p>
@@ -133,7 +136,8 @@
     <div class="progress-container">
       <input type="range" id="progressBar" value="0" max="100">
       <div>
-        <span id="currentTime">00:00</span> / <span id="duration">00:00</span>
+        <span id="currentTime">00:00</span>
+        <span id="duration">00:00</span>
       </div>
     </div>
     <div class="controls">
@@ -141,21 +145,40 @@
       <button id="playButton">▶️</button>
       <button id="nextButton">⏭</button>
     </div>
+    <!-- Çalma Listesi -->
     <ul class="playlist" id="playlist">
       <li data-src="https://audios.tmgrup.com.tr/724_dinle/2022/12/28/1672224279953.m4a" 
           data-title="Bölüm 1" 
           data-artist="Ahmet Hamdi Tanpınar" 
-          data-cover="https://via.placeholder.com/350x200">
-        <img src="https://via.placeholder.com/40" alt="Cover"> Bölüm 1
+          data-cover="https://i.tmgrup.com.tr/724dinle/2024/10/05/1728113737439.jpg">
+        <img src="https://i.tmgrup.com.tr/724dinle/2024/10/05/1728113737439.jpg" alt="Cover"> Bölüm 1
       </li>
       <li data-src="https://audios.tmgrup.com.tr/724_dinle/2022/12/28/1672225224448.m4a" 
           data-title="Bölüm 2" 
           data-artist="Ahmet Hamdi Tanpınar" 
-          data-cover="https://via.placeholder.com/350x200">
-        <img src="https://via.placeholder.com/40" alt="Cover"> Bölüm 2
+          data-cover="https://i.tmgrup.com.tr/724dinle/2024/10/05/1728113755603.jpg">
+        <img src="https://i.tmgrup.com.tr/724dinle/2024/10/05/1728113755603.jpg" alt="Cover"> Bölüm 2
+      </li>
+      <li data-src="https://audios.tmgrup.com.tr/724_dinle/2022/12/28/1672226168781.m4a" 
+          data-title="Bölüm 3" 
+          data-artist="Ahmet Hamdi Tanpınar" 
+          data-cover="https://i.tmgrup.com.tr/724dinle/2024/10/05/1728113769613.jpg">
+        <img src="https://i.tmgrup.com.tr/724dinle/2024/10/05/1728113769613.jpg" alt="Cover"> Bölüm 3
+      </li>
+      <li data-src="https://audios.tmgrup.com.tr/724_dinle/2022/12/28/1672228607504.m4a" 
+          data-title="Bölüm 4" 
+          data-artist="Ahmet Hamdi Tanpınar" 
+          data-cover="https://i.tmgrup.com.tr/724dinle/2024/10/05/1728113778347.jpg">
+        <img src="https://i.tmgrup.com.tr/724dinle/2024/10/05/1728113778347.jpg" alt="Cover"> Bölüm 4
+      </li>
+      <li data-src="https://audios.tmgrup.com.tr/724_dinle/2022/12/28/1672231126589.m4a" 
+          data-title="Bölüm 5" 
+          data-artist="Ahmet Hamdi Tanpınar" 
+          data-cover="https://i.tmgrup.com.tr/724dinle/2024/10/05/1728113803550.jpg">
+        <img src="https://i.tmgrup.com.tr/724dinle/2024/10/05/1728113803550.jpg" alt="Cover"> Bölüm 5
       </li>
     </ul>
-    <audio id="audioPlayer"></audio>
+    <audio id="audioPlayer" autoplay></audio>
   </div>
 
   <script>
@@ -177,31 +200,20 @@
     function loadSong(index) {
       const song = songs[index];
       audioPlayer.src = song.dataset.src;
-      albumCover.src = song.dataset.cover;
       songTitle.textContent = song.dataset.title;
       songArtist.textContent = song.dataset.artist;
+      albumCover.src = song.dataset.cover;
+
       songs.forEach(s => s.classList.remove('active'));
       song.classList.add('active');
-    }
 
-    function playSong() {
-      audioPlayer.play();
-      playButton.textContent = '⏸';
-    }
-
-    function pauseSong() {
-      audioPlayer.pause();
-      playButton.textContent = '▶️';
-    }
-
-    function formatTime(time) {
-      const minutes = Math.floor(time / 60);
-      const seconds = Math.floor(time % 60).toString().padStart(2, '0');
-      return `${minutes}:${seconds}`;
+      audioPlayer.play(); // Şarkıyı otomatik başlat
+      playButton.textContent = '⏸'; // Oynatma butonunu güncelle
     }
 
     function updateProgress() {
-      progressBar.value = (audioPlayer.currentTime / audioPlayer.duration) * 100 || 0;
+      const progressPercent = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+      progressBar.value = progressPercent || 0;
       currentTimeEl.textContent = formatTime(audioPlayer.currentTime);
     }
 
@@ -210,24 +222,30 @@
       audioPlayer.currentTime = newTime;
     }
 
+    function formatTime(time) {
+      const minutes = Math.floor(time / 60);
+      const seconds = Math.floor(time % 60).toString().padStart(2, '0');
+      return `${minutes}:${seconds}`;
+    }
+
     playButton.addEventListener('click', () => {
       if (audioPlayer.paused) {
-        playSong();
+        audioPlayer.play();
+        playButton.textContent = '⏸';
       } else {
-        pauseSong();
+        audioPlayer.pause();
+        playButton.textContent = '▶️';
       }
     });
 
     prevButton.addEventListener('click', () => {
       currentIndex = (currentIndex - 1 + songs.length) % songs.length;
       loadSong(currentIndex);
-      playSong();
     });
 
     nextButton.addEventListener('click', () => {
       currentIndex = (currentIndex + 1) % songs.length;
       loadSong(currentIndex);
-      playSong();
     });
 
     playlist.addEventListener('click', (e) => {
@@ -235,15 +253,11 @@
       if (clickedSong) {
         currentIndex = songs.indexOf(clickedSong);
         loadSong(currentIndex);
-        playSong();
       }
     });
 
     progressBar.addEventListener('input', setProgress);
     audioPlayer.addEventListener('timeupdate', updateProgress);
-    audioPlayer.addEventListener('loadedmetadata', () => {
-      durationEl.textContent = formatTime(audioPlayer.duration);
-    });
 
     loadSong(currentIndex);
   </script>
